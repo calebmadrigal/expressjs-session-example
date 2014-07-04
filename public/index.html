@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Session example with Express</title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+        <script>
+            $(function() {
+              $("#post-name").click(function() {
+                postName();
+              });
+              $("#logout").click(function() {
+                logout();
+              });
+              
+              getName();
+            });
+            
+            function getName() {
+              $.ajax({
+                url: "/name/",
+                dataType: "json",
+                success: function (response) {
+                  var name = response['name'];
+                  updateUI(name);
+                }
+              });
+            }
+            
+            function postName() {
+              var name = $("#user-name").val();
+                  
+              $.ajax({
+                url: "/name",
+                type: "POST",
+                dataType: "json",
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({ "name": name }),
+                success: function (data) {
+                  getName();
+                }
+              });
+            }
+
+            function logout() {
+              $.get( "/logout", function( data ) {
+                updateUI("");
+              });
+            }
+            
+            function updateUI(name) {
+              if(name !== '') {
+                $("#name").html(name);
+                $("#name-display").show();
+                $("#name-form").hide();
+              }
+              else {
+                $("#name-display").hide();
+                $("#name-form").show();
+              }
+            }
+        </script>
+    </head>
+    <body>
+    
+    <div id="name-display">
+      <p>Hello, <span id="name"></span></p>
+      <input type="button" name="logout" id="logout" value="Forget me" />
+    </div>
+    
+    <div id="name-form">
+      What is your name?
+      <input type="text" name="user-name" id="user-name" />
+      <input type="button" name="post-name" id="post-name" value="Post" />
+    </div>
+        
+    </body>
+</html>
